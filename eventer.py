@@ -3,7 +3,7 @@ from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout, QApplication, QMainWindow,
                                 QDockWidget, QPushButton, QWidget, QDesktopWidget,
-                                QSystemTrayIcon, QMenu, QAction)
+                                QSystemTrayIcon, QMenu, QAction, QTextEdit, QListView)
 
 
 
@@ -27,15 +27,17 @@ class MainWindow(QMainWindow):
 
     ####    Tray MENU   #################
         trayIconMenu = QMenu(self)
+        trayIconMenu.setTitle("Main menu")
         trayIconMenu.addAction("Show Main Window", self.showMainWindow)
         trayIconMenu.addAction("Switch chat", self.toggleDockWidget)
+        trayIconMenu.addSeparator()
         trayIconMenu.addAction("Quit", self.close)
         self.tray_icon.setContextMenu(trayIconMenu)
 
     ######################################
         
 
-    # MENUBAR description:
+    ####     MENUBAR description:    #################
         mainmenu = self.menuBar()
         file = mainmenu.addMenu("File")
         file.addAction("isFloating", self.floatingInfo)
@@ -52,20 +54,53 @@ class MainWindow(QMainWindow):
         self.dockWidget.setMaximumSize(maxWidth/2, maxHeight)
         self.dockWidget.setBaseSize(maxWidth/2, maxHeight)
         self.dockWidget.resize(maxWidth/4, maxHeight/1.5)
-        self.dockWidget.setFeatures(QDockWidget.DockWidgetFloatable|QDockWidget.DockWidgetMovable)
+        self.dockWidget.setFeatures(QDockWidget.NoDockWidgetFeatures)
         self.dockWidget.setVisible(False)
+
+    ####    TODO:" set dockWidget widgets"      ################
+
+        messengerWidget = QWidget()
+
+        masterVertical = QVBoxLayout()
+        messengerWidget.setLayout(masterVertical)
+
+        slaveHorizont = QHBoxLayout()
+        subSlaveVertical = QVBoxLayout()
+
+        msgSpace = QListView()
+        textEdit = QTextEdit()
+        sendBtn = QPushButton("Send")
+
+        masterVertical.addWidget(msgSpace)
+        masterVertical.addLayout(slaveHorizont)
+
+        slaveHorizont.addWidget(textEdit)
+        slaveHorizont.addLayout(subSlaveVertical)
+
+        subSlaveVertical.addWidget(sendBtn)
+
+
+        # self.dockWidget.setLayout(QVBoxLayout())
+        # print(self.dockWidget.setLayout(QVBoxLayout()))
+        
+
+
+
+
+    ############################################################
+        
         
 
         
 
-        self.statusBar()
+        # self.statusBar()
 
-        toggleDockWidgetBtn = QPushButton("Show geomerty", self)
+        toggleDockWidgetBtn = QPushButton("Show geomerty", workSpace)
         toggleDockWidgetBtn.move(10, 40)
         toggleDockWidgetBtn.clicked.connect(self.showGeometry)
     
     ####     TEST BUTONS     ####
-        hideBtn = QPushButton("hide main", self)
+        hideBtn = QPushButton("hide main", workSpace)
         hideBtn.move(10, 70)
         hideBtn.clicked.connect(self.hideMainWindow)
     #######################################################
@@ -100,6 +135,7 @@ class MainWindow(QMainWindow):
     ####    test functionality
     def showGeometry(self):
         availGeometry = QDesktopWidget().availableGeometry()
+        self.statusBar().showMessage("Available geometry.")
         print("Available geometry: ", availGeometry)
         print("Right point: ", QDesktopWidget().availableGeometry().bottomRight())
         print("DockWidget frame bottomRight: ", self.dockWidget.frameGeometry().bottomRight())
