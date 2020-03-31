@@ -2,7 +2,7 @@ import os, sys, datetime
 from PyQt5 import QtCore, QtGui, Qt
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QApplication, QPushButton, QHBoxLayout,
                              QVBoxLayout, QDesktopWidget, QGroupBox, QListView,
-                             QTextEdit, QTreeView
+                             QTextEdit, QTreeView, QScrollArea, QLabel
                             )
 
 
@@ -30,6 +30,7 @@ class MainWindow(QMainWindow):
         self.setMaximumSize(screenGeometry.width()//2.5, screenGeometry.height()-200)
         self.setCentralWidget(workspace)
         
+        
         globalVBox = QVBoxLayout()
         workspace.setLayout(globalVBox)
 
@@ -37,29 +38,30 @@ class MainWindow(QMainWindow):
         centerLayout = QHBoxLayout()
         footerLayout = QHBoxLayout()
 
+        self.messagesArea = QScrollArea()
+        messageAreaZone = QWidget()
+        messageAreaLayout = QVBoxLayout()
+        messageAreaZone.setLayout(messageAreaLayout)
+        # self.messagesArea.setLayout(QVBoxLayout())
+        self.messagesArea.setMinimumHeight(150)
+        self.messagesArea.setWidget(messageAreaZone)
+        self.messagesArea.setWidgetResizable(False)
+        # self.messagesArea.adjustSize()
+
+        print(messageAreaZone.geometry())
+        print(self.messagesArea.geometry())
+        for _ in range(25):
+            messageAreaZone.layout().addWidget(QLabel(str(_)))
+        
         self.textEdit = QTextEdit()
         self.textEdit.setMaximumHeight(44)
-
-        listView = QListView()
-        listView.setMinimumHeight(150)
-        # listView.setWordWrap(True)
-        # listView.setWrapping(True)
-        listView.setSpacing(3)
-        self.entry = QtGui.QStandardItemModel()
-        listView.setModel(self.entry)
-        self.entry.setColumnCount(2)
-
-        treeView = QTreeView()
-        treeView.setMinimumHeight(150)
-        treeView.setModel(self.entry)
-        treeView.setHeaderHidden(True)
-        
 
         sndBtn = QPushButton("Send")
         sndBtn.setMaximumHeight(44)
         sndBtn.clicked.connect(self.sendMsg)
 
-        centerLayout.addWidget(treeView)
+
+        centerLayout.addWidget(self.messagesArea)
 
         footerLayout.addWidget(self.textEdit)
         footerLayout.addWidget(sndBtn)
@@ -109,10 +111,10 @@ class MainWindow(QMainWindow):
 
 ####    Send msg                    #
     def sendMsg(self):
-        msgText = QtGui.QStandardItem(self.textEdit.toPlainText())
-        msgTime = QtGui.QStandardItem(datetime.datetime.now().strftime("%H:%M:%S"))
-        # self.entry.appendRow(msg)
-        self.entry.appendRow([msgText, msgTime])
+        msgText = QLabel(self.textEdit.toPlainText())
+        msgText.setMinimumHeight(55)
+        msgTime = datetime.datetime.now().strftime("%H:%M:%S")
+        # self.messagesArea.widget().addWidget(QLabel("1"))
         self.textEdit.clear()
 ####################################
 
