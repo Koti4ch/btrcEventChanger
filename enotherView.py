@@ -1,8 +1,8 @@
 import os, sys, datetime
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, Qt
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QApplication, QPushButton, QHBoxLayout,
                              QVBoxLayout, QDesktopWidget, QGroupBox, QListView,
-                             QTextEdit,
+                             QTextEdit, QTreeView
                             )
 
 
@@ -20,6 +20,7 @@ class MainWindow(QMainWindow):
         availableScreen = QDesktopWidget().availableGeometry()
     ##########################################
 
+
         workspace = QWidget(self)
         self.setWindowTitle("Eventeger")
         self.statusBar().showMessage("We are ready!", 900)
@@ -36,22 +37,31 @@ class MainWindow(QMainWindow):
         centerLayout = QHBoxLayout()
         footerLayout = QHBoxLayout()
 
-        textEdit = QTextEdit()
-        textEdit.setMaximumHeight(44)
+        self.textEdit = QTextEdit()
+        self.textEdit.setMaximumHeight(44)
 
         listView = QListView()
         listView.setMinimumHeight(150)
+        # listView.setWordWrap(True)
+        # listView.setWrapping(True)
+        listView.setSpacing(3)
         self.entry = QtGui.QStandardItemModel()
         listView.setModel(self.entry)
+        self.entry.setColumnCount(2)
+
+        treeView = QTreeView()
+        treeView.setMinimumHeight(150)
+        treeView.setModel(self.entry)
+        treeView.setHeaderHidden(True)
         
 
         sndBtn = QPushButton("Send")
         sndBtn.setMaximumHeight(44)
-        sndBtn.clicked.connect(textEdit.append("text"))
+        sndBtn.clicked.connect(self.sendMsg)
 
-        centerLayout.addWidget(listView)
+        centerLayout.addWidget(treeView)
 
-        footerLayout.addWidget(textEdit)
+        footerLayout.addWidget(self.textEdit)
         footerLayout.addWidget(sndBtn)
 
         globalVBox.addLayout(centerLayout)
@@ -62,6 +72,22 @@ class MainWindow(QMainWindow):
         # globalVBox.addLayout(downHBox)
 
         self.show()
+
+
+####    CSS styles for application widgets  #
+    def initStyleSheets(self):
+        self.setStyleSheet('''
+                    QPushButton {
+                        border-radius: 3px;
+                    }
+                    QPushButton::hover {
+                        border-radius: 3px;
+                        border-width: 2px;
+                        font:   12px;
+                        padding: 2px;
+                    }
+        ''')
+##############################################
 
 
 
@@ -77,12 +103,17 @@ class MainWindow(QMainWindow):
 
         frameCenter.moveCenter(centerPoint)
         self.move(frameCenter.topLeft())
-        # move(frameCenter.center())
         print("Move to center")
 #####################################
-####    Send mdg                    #
+
+
+####    Send msg                    #
     def sendMsg(self):
-        self.entry.appendRow("msg")
+        msgText = QtGui.QStandardItem(self.textEdit.toPlainText())
+        msgTime = QtGui.QStandardItem(datetime.datetime.now().strftime("%H:%M:%S"))
+        # self.entry.appendRow(msg)
+        self.entry.appendRow([msgText, msgTime])
+        self.textEdit.clear()
 ####################################
 
 
