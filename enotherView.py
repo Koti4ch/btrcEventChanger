@@ -2,7 +2,7 @@ import os, sys, datetime
 from PyQt5 import QtCore, QtGui, Qt
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QApplication, QPushButton, QHBoxLayout,
                              QVBoxLayout, QDesktopWidget, QGroupBox, QListView,
-                             QTextEdit, QTreeView, QScrollArea, QLabel
+                             QTextEdit, QTreeView, QScrollArea, QLabel, QFrame
                             )
 
 
@@ -39,19 +39,25 @@ class MainWindow(QMainWindow):
         footerLayout = QHBoxLayout()
 
         self.messagesArea = QScrollArea()
+        self.messagesArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         messageAreaZone = QWidget()
-        messageAreaLayout = QVBoxLayout()
-        messageAreaZone.setLayout(messageAreaLayout)
+        self.messageAreaLayout = QVBoxLayout()
+        messageAreaZone.setLayout(self.messageAreaLayout)
+        testText = QLabel()
+        testText.setWordWrap(True)
+        testText.setText("TESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTEST")
+        self.messageAreaLayout.addWidget(testText)
         # self.messagesArea.setLayout(QVBoxLayout())
         self.messagesArea.setMinimumHeight(150)
+        self.messagesArea.setWidgetResizable(True)
+
         self.messagesArea.setWidget(messageAreaZone)
-        self.messagesArea.setWidgetResizable(False)
         # self.messagesArea.adjustSize()
 
         print(messageAreaZone.geometry())
         print(self.messagesArea.geometry())
-        for _ in range(25):
-            messageAreaZone.layout().addWidget(QLabel(str(_)))
+        # for _ in range(25):
+        #     messageAreaZone.layout().addWidget(QLabel(str(_)))
         
         self.textEdit = QTextEdit()
         self.textEdit.setMaximumHeight(44)
@@ -111,12 +117,40 @@ class MainWindow(QMainWindow):
 
 ####    Send msg                    #
     def sendMsg(self):
-        msgText = QLabel(self.textEdit.toPlainText())
-        msgText.setMinimumHeight(55)
+        msgText = self.textEdit.toPlainText()
         msgTime = datetime.datetime.now().strftime("%H:%M:%S")
-        # self.messagesArea.widget().addWidget(QLabel("1"))
+        # self.messageAreaLayout.addWidget(msgText)
+        frame = MessageFrame()
+        # frame.initFrameUI(self)
+        self.messageAreaLayout.addWidget(frame.initFrameUI(self, msgText))
         self.textEdit.clear()
+        print()
 ####################################
+
+
+class MessageFrame(object):
+    def initFrameUI(self, MainWindow, text):
+        msgFrame = QFrame()
+        msgFrame.setFrameShape(QFrame.WinPanel)
+        msgFrame.setFrameShadow(QFrame.Raised)
+
+        frameLayout = QVBoxLayout(msgFrame)
+
+        nameLabel = QLabel('Name:')
+        
+        msgLabel = QLabel(text)
+        msgLabel.setWordWrap(True)
+        
+        timeLabel = QLabel(datetime.datetime.now().strftime("%H:%M:%S"))
+        timeLabel.setAlignment(QtCore.Qt.AlignRight)
+        
+        dateSeparator = QGroupBox()
+
+        frameLayout.addWidget(nameLabel)
+        frameLayout.addWidget(msgLabel)
+        frameLayout.addWidget(timeLabel)
+        return msgFrame
+        print("init")
 
 
         
