@@ -39,31 +39,25 @@ class MainWindow(QMainWindow):
         footerLayout = QHBoxLayout()
 
         self.messagesArea = QScrollArea()
-        # self.messagesArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.messagesArea.setWidgetResizable(True)
         messageAreaZone = QWidget()
         self.messageAreaLayout = QVBoxLayout()
+        self.messageAreaLayout.setSpacing(20)
         messageAreaZone.setLayout(self.messageAreaLayout)
-        testText = MessageFrame()
-        self.messageAreaLayout.addWidget(testText.initFrameUI(self, "TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TESTTESTTESTTESTTESTTESTTESTTEST"))
-        # self.messagesArea.setLayout(QVBoxLayout())
+        ##### Start test message
+        # testText = MessageFrame()
+        # self.messageAreaLayout.addWidget(testText.initFrameUI(self, "TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TESTTESTTESTTESTTESTTESTTESTTEST"))
         self.messagesArea.setMinimumHeight(150)
         self.messagesArea.setWidgetResizable(True)
 
         self.messagesArea.setWidget(messageAreaZone)
-        # self.messagesArea.adjustSize()
 
-        print(messageAreaZone.geometry())
-        print(self.messagesArea.geometry())
-        # for _ in range(25):
-        #     messageAreaZone.layout().addWidget(QLabel(str(_)))
-        
         self.textEdit = QTextEdit()
         self.textEdit.setMaximumHeight(44)
 
         sndBtn = QPushButton("Send")
         sndBtn.setMaximumHeight(44)
         sndBtn.clicked.connect(self.sendMsg)
-
 
         centerLayout.addWidget(self.messagesArea)
 
@@ -73,12 +67,7 @@ class MainWindow(QMainWindow):
         globalVBox.addLayout(centerLayout)
         globalVBox.addLayout(footerLayout)
 
-        # globalVBox.addLayout(upperHBox)
-        # globalVBox.addLayout(centerHBox)
-        # globalVBox.addLayout(downHBox)
-
         self.show()
-        self.test()
 
 
 ####    CSS styles for application widgets  #
@@ -97,20 +86,20 @@ class MainWindow(QMainWindow):
 ##############################################
 
 
-
 ####    Position functionality =)   #
     def centralPosition(self):
-        print("Available:", QDesktopWidget().availableGeometry())
         centerPoint = QDesktopWidget().availableGeometry().center()
-        print("Screen center:", centerPoint)
         frameCenter = self.frameGeometry()
-        print("Frame center:", frameCenter)
-
-
 
         frameCenter.moveCenter(centerPoint)
         self.move(frameCenter.topLeft())
-        print("Move to center")
+
+    def bottomRightPosition(self):
+        bottom_right_point = QDesktopWidget().availableGeometry().bottomRight()
+        frame_geometry = self.frameGeometry()
+
+        frame_geometry.moveBottomRight(bottom_right_point)
+        self.move(frame_geometry.bottomRight())
 #####################################
 
 
@@ -118,13 +107,12 @@ class MainWindow(QMainWindow):
     def sendMsg(self):
         msgText = self.textEdit.toHtml()
         msgTime = datetime.datetime.now().strftime("%H:%M:%S")
-        # self.messageAreaLayout.addWidget(msgText)
+
         frame = MessageFrame()
-        # frame.initFrameUI(self)
         self.messageAreaLayout.addWidget(frame.initFrameUI(self, msgText))
         self.textEdit.clear()
-        print()
 ####################################
+
 
     def test(self):
         self.threadTask1 = ThreadThe1st(self)
@@ -142,13 +130,12 @@ class MainWindow(QMainWindow):
 
 
 
-
 class MessageFrame(object):
     def initFrameUI(self, MainWindow, text):
         msgFrame = QFrame()
         msgFrame.setFrameShape(QFrame.WinPanel)
         msgFrame.setFrameShadow(QFrame.Raised)
-        msgFrame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        msgFrame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         frameLayout = QVBoxLayout(msgFrame)
         frameLayout.setContentsMargins(5,2,5,3)
@@ -170,6 +157,7 @@ class MessageFrame(object):
         frameLayout.addWidget(timeLabel)
         print("init messageFrame:\n", text)
         return msgFrame
+
 
 
 class ThreadThe1st(QtCore.QThread):
