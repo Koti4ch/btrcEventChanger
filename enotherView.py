@@ -78,6 +78,7 @@ class MainWindow(QMainWindow):
         # globalVBox.addLayout(downHBox)
 
         self.show()
+        self.test()
 
 
 ####    CSS styles for application widgets  #
@@ -125,6 +126,22 @@ class MainWindow(QMainWindow):
         print()
 ####################################
 
+    def test(self):
+        self.threadTask1 = ThreadThe1st(self)
+        self.threadTask1.start()
+
+        self.threadTask2 = ThreadThe2nd(self)
+        self.threadTask2.start()
+
+        self.threadTask3 = ThreadThe3rd(self)
+        self.threadTask3.start()
+
+        self.threadTask4 = ThreadThe4th(self)
+        self.threadTask4.start()
+
+
+
+
 
 class MessageFrame(object):
     def initFrameUI(self, MainWindow, text):
@@ -136,7 +153,7 @@ class MessageFrame(object):
         frameLayout = QVBoxLayout(msgFrame)
         frameLayout.setContentsMargins(5,2,5,3)
 
-        nameLabel = QLabel('Name:')
+        nameLabel = QLabel(os.getlogin() + ":")
         
         msgLabel = QLabel(text)
         msgLabel.setWordWrap(True)
@@ -151,8 +168,56 @@ class MessageFrame(object):
         frameLayout.addWidget(nameLabel)
         frameLayout.addWidget(msgLabel)
         frameLayout.addWidget(timeLabel)
-        print("init messageFrame:", text)
+        print("init messageFrame:\n", text)
         return msgFrame
+
+
+class ThreadThe1st(QtCore.QThread):
+    signal = QtCore.pyqtSignal()
+
+    def __init__(self, *args, **kwargs):
+        super(ThreadThe1st, self).__init__(*args, **kwargs)
+
+    def run(self):
+        while True:
+            QtCore.QThread.msleep(100)
+            print("1 - - - "*5)
+
+
+class ThreadThe2nd(QtCore.QThread):
+    signal = QtCore.pyqtSignal()
+
+    def __init__(self, *args, **kwargs):
+        super(ThreadThe2nd, self).__init__(*args, **kwargs)
+
+    def run(self):
+        while True:
+            QtCore.QThread.msleep(200)
+            print("- 2 - - "*5)
+
+
+class ThreadThe3rd(QtCore.QThread):
+    signal = QtCore.pyqtSignal()
+
+    def __init__(self, *args, **kwargs):
+        super(ThreadThe3rd, self).__init__(*args, **kwargs)
+
+    def run(self):
+        while True:
+            QtCore.QThread.msleep(300)
+            print("- - 3 - "*5)
+
+
+class ThreadThe4th(QtCore.QThread):
+    signal = QtCore.pyqtSignal()
+
+    def __init__(self, *args, **kwargs):
+        super(ThreadThe4th, self).__init__(*args, **kwargs)
+
+    def run(self):
+        while True:
+            QtCore.QThread.msleep(250)
+            print("- - - 4 "*5)
 
 
         
