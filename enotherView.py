@@ -2,7 +2,7 @@ import os, sys, datetime
 from PyQt5 import QtCore, QtGui, Qt
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QApplication, QPushButton, QHBoxLayout,
                              QVBoxLayout, QDesktopWidget, QGroupBox, QListView,
-                             QTextEdit, QTreeView, QScrollArea, QLabel, QFrame
+                             QTextEdit, QTreeView, QScrollArea, QLabel, QFrame, QSizePolicy
                             )
 
 
@@ -39,14 +39,12 @@ class MainWindow(QMainWindow):
         footerLayout = QHBoxLayout()
 
         self.messagesArea = QScrollArea()
-        self.messagesArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        # self.messagesArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         messageAreaZone = QWidget()
         self.messageAreaLayout = QVBoxLayout()
         messageAreaZone.setLayout(self.messageAreaLayout)
-        testText = QLabel()
-        testText.setWordWrap(True)
-        testText.setText("TESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTEST")
-        self.messageAreaLayout.addWidget(testText)
+        testText = MessageFrame()
+        self.messageAreaLayout.addWidget(testText.initFrameUI(self, "TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TESTTESTTESTTESTTESTTESTTESTTEST"))
         # self.messagesArea.setLayout(QVBoxLayout())
         self.messagesArea.setMinimumHeight(150)
         self.messagesArea.setWidgetResizable(True)
@@ -117,7 +115,7 @@ class MainWindow(QMainWindow):
 
 ####    Send msg                    #
     def sendMsg(self):
-        msgText = self.textEdit.toPlainText()
+        msgText = self.textEdit.toHtml()
         msgTime = datetime.datetime.now().strftime("%H:%M:%S")
         # self.messageAreaLayout.addWidget(msgText)
         frame = MessageFrame()
@@ -133,13 +131,17 @@ class MessageFrame(object):
         msgFrame = QFrame()
         msgFrame.setFrameShape(QFrame.WinPanel)
         msgFrame.setFrameShadow(QFrame.Raised)
+        msgFrame.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         frameLayout = QVBoxLayout(msgFrame)
+        frameLayout.setContentsMargins(5,2,5,3)
 
         nameLabel = QLabel('Name:')
         
         msgLabel = QLabel(text)
         msgLabel.setWordWrap(True)
+        msgLabel.setFrameShadow(QFrame.Raised)
+        msgLabel.setMargin(2)
         
         timeLabel = QLabel(datetime.datetime.now().strftime("%H:%M:%S"))
         timeLabel.setAlignment(QtCore.Qt.AlignRight)
@@ -149,8 +151,8 @@ class MessageFrame(object):
         frameLayout.addWidget(nameLabel)
         frameLayout.addWidget(msgLabel)
         frameLayout.addWidget(timeLabel)
+        print("init messageFrame:", text)
         return msgFrame
-        print("init")
 
 
         
